@@ -105,8 +105,44 @@ by the law of large numbers as $t$ goes to infinity $Q_t(a)$ converges to $q_*(a
 **How does this estimate can be used?**
 
 1. **Greedy Action Selection:** Select action with highest estimated value $\underset{a}{\mathrm{argmax}}\;Q_t(a)$<br/>this method always exploits (i.e maximizes immediate reward)
-2. **Alternative rule:** behave greedy most of the time but with small prob $\epsilon$ select randomly from nongreedy actions. This method is called $\epsilon-greedy$. It performs exploration. As the number of steps increases, every action will be sampled infinite number of times ensuring that $Q_t(a)$ converges to $q_*(a)$ 
+2. **Alternative rule:** behave greedy most of the time but with small prob $\varepsilon$ select randomly from nongreedy actions. This method is called $\varepsilon-greedy$. It performs exploration. As the number of steps increases, every action will be sampled infinite number of times ensuring that $Q_t(a)$ converges to $q_*(a)$ 
 
 ## The 10-armed Testbed
 
-The 10-armed testbed is a method to compare performance of different learning methods
+The 10-armed testbed is a method to compare performance of different learning methods.
+
+1. Take 2000 randomly generated instances of the armed problem with k=10. For each action, the action value (expected reward) $q_*(a),\; a=1,\dots,10$, were selected according to a normal (Gaussian) distribution with mean 0 and variance 1.
+2. When an action $A_t$ is selected we will receive a reward $R_t$ sampled from a normal (Gaussian) distribution with mean $q_*(a)$ and variance 1. $R_t(a)\sim \mathcal{N}(q_*(A_t),1)$
+
+<img src="../img/10armed.png" style="zoom:50%;" />
+
+To test a learning method we store its rewards over 1000 steps (run). Then we repeat this for 2000 independent runs (each run refers to a different instance of the 10-armed bandit problem (i.e., different $q_*(a)$ values).
+
+Finally, we average rewards of all runs at the same time $t$
+
+```pseudocode
+procedure TenArmedTestBed
+	cum_rewards = []
+    repeat 2000 times:
+        problem = get_instance()
+        cum_reward = 0
+        repeat 1000 times:
+            a = get_action()
+            r = get_reward(a, problem)
+            cum_reward += r
+        cum_rewards.add(cum_reward)
+    return sum(cum_rewards) / lenght(cum_rewards)
+end procedure
+```
+
+### Comparing Epsilon Greedy Methods
+
+<img src="../img/epsgreedycomp.png" style="zoom:70%;" />
+
+With **larger reward variance** (e.g., 10 instead of 1) $\varepsilon$-greedy methods should perform even better than the greedy method.
+
+If the r**eward variances are zero** then a single try is enough to discover action values. In this case **greedy methods perform best** because they soon find the best action and then never explore.
+
+If the **bandit tasks** were **nonstationary** (i.e., true values q*(a) change over time) then exploration is needed also in the deterministic case (zero variance).
+
+## Incremental Implementation 
