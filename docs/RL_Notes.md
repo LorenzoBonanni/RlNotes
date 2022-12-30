@@ -4,7 +4,7 @@ When we have to write a computer program the **Traditional approach** relies on 
 
 ## How does Humans Learn?
 
-<img src="../img/Fig_02.png" alt="human_learning" style="zoom:60%;" />
+<img src="Fig_02.png" alt="human_learning" style="zoom:60%;" />
 
 Here we can see an example of a baby that needs to find out if touching the fire is good or bad. It does so by interacting with the environment. Infants have no explicit teacher but direct sensorimotor connection to the environment.
 Exercising this connection produces information about:
@@ -44,7 +44,69 @@ The process of finding the perfect sweep spot between exploration and exploitati
 
 # Multi-Armed-Bandit
 
-Reinforcement Learning distinguishes from other types of learning by two main factors:
+Multi-Armed Bandit is a Reinforcement Learning Problem useful to evaluate some aspects of RL in the simplified setting of single state (**nonassociative setting**)
 
-- RL uses training information to evaluate agent’s actions
-- Other learning methods instruct the agent providing examples of correct actions
+## K-armed Bandit Problem
+
+|                        k-armed bandit                        |                        1-armed bandit                        |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| <img src="../img/multiarmed.png" alt="alt-text-1" title="title-1" style="zoom:95%;" /> | <img src="../img/1armed.jpg" alt="alt-text-2" style="zoom:60%;" /> |
+
+The problem of the k armed bandit is a stochastic problem in which you have repeatedly to choose among k different options (actions) after each choice you receive a numerical reward chosen from a stationary probability distribution depending on the action selected. The most simple setting is the one armed bandit problem which is analogous to a slot machine.
+
+maximize the expected total reward over some time period (e.g. 1000 action selections)
+
+**Example**
+
+![](../img/multiarmed_example.drawio.png)
+$$
+\mathcal{A}=\{1,2,3,4,5\}
+$$
+In this example we have 5 actions (from 1 to 5) each action has a stationary probability distribution over reward, this distribution can be approximated single value the expected (mean) reward ($\mu$), this value is also called **value of the action**.
+
+If $A_t$ is the action selected at step $t$ and $R_t$ is the corresponding reward then the expected reward given that action a was selected is:
+$$
+q_*(a)\doteq\mathbb{E}[R_t|A_t=a]
+$$
+If you **know the value of each action** then it is trivial to solve the k-armed bandit problem: **always select the action with the highest value**. 
+
+The problem is that **we don't really know the value of each action** so we need to find a way to **estimate** it, to do so we can explore, but remember that we have a limited time so in this time we need **both** to **explore** (i.e learn the values) and to **exploit** (i.e exploit the accumulated knowledge maximize the expected total reward).
+
+The estimated value of action a at time t is $Q_t(a)$, we would like it to be as close as possible to $q_*(a)$ (i.e the real value)
+$$
+\lim_{t\to\infty}Q_t(a)=q_*(a)
+$$
+Given estimates of all action values, we call **greedy action** the action with the **largest estimated value**.
+
+- When you choose the **greedy action** you **exploit** your current knowledge of action value
+- When you choose **nongreedy actions** you **explore** action values to get new knowledge on them
+
+- **Exploitation**: is the best thing to do to maximize the expected reward on a one step horizon.
+- **Exploration**: may produce greater total reward in the long run.
+- **Dilemma**: should I explore or exploit? There is a conflict
+
+## Methods for Estimating Q-Value
+
+### Sample Average Reward
+
+Since the value of an action is the mean reward obtained when the action is selected, a natural way to estimate it is by averaging the rewards actually received:
+$$
+Q_t\doteq \frac{\sum^{t-1}_{i=1}R_i*\mathbb{1}_{A_i=a}}{\sum^{t-1}_{i=1}\mathbb{1}_{A_i=a}}=\frac{sum\; of\; rewards\; from\; taking\; a}{number\; of\;times\;a \;taken }\\\\
+\mathbb{1}_{A_i=a}= 
+\begin{cases}
+    1,& \text{if } A_i=a\\
+    0,              & \text{otherwise}
+\end{cases}
+$$
+
+
+by the law of large numbers as $t$ goes to infinity $Q_t(a)$ converges to $q_*(a)$ 
+
+**How does this estimate can be used?**
+
+1. **Greedy Action Selection:** Select action with highest estimated value $\underset{a}{\mathrm{argmax}}\;Q_t(a)$<br/>this method always exploits (i.e maximizes immediate reward)
+2. **Alternative rule:** behave greedy most of the time but with small prob $\epsilon$ select randomly from nongreedy actions. This method is called $\epsilon-greedy$. It performs exploration. As the number of steps increases, every action will be sampled infinite number of times ensuring that $Q_t(a)$ converges to $q_*(a)$ 
+
+## The 10-armed Testbed
+
+The 10-armed testbed is a method to compare performance of different learning methods
