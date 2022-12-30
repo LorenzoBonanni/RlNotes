@@ -29,4 +29,16 @@ jobs:
         with:
           name: docs
           path: pdfs
-
+      # Removes the latest release, so that we can create a new one in its place
+      - name: Delete latest release
+        uses: ame-yu/action-delete-latest-release@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+           pdfs/RL_Notes.pdf
+          tag_name: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
