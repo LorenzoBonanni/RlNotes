@@ -4,7 +4,7 @@ When we have to write a computer program the **Traditional approach** relies on 
 
 ## How does Humans Learn?
 
-<img src="/home/lorenzobonanni/Desktop/UNI/MAGISTRALE/RL/teoria/Fig_02.png" alt="human_learning" style="zoom:60%;" />
+<img src="./img/Fig_02.png" alt="human_learning" style="zoom:60%;" />
 
 Here we can see an example of a baby that needs to find out if touching the fire is good or bad. It does so by interacting with the environment. Infants have no explicit teacher but direct sensorimotor connection to the environment.
 Exercising this connection produces information about:
